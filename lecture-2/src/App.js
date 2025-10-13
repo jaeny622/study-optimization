@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
+import React, { lazy, Suspense, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Header from './components/Header'
 import InfoTable from './components/InfoTable'
 import SurveyChart from './components/SurveyChart'
 import Footer from './components/Footer'
-import ImageModal from './components/ImageModal'
+const LazyImageModal = lazy(() => import('./components/ImageModal'));
 
 function App() {
-    const [showModal, setShowModal] = useState(false)
+    const [showModal, setShowModal] = useState(false);
+
+    useEffect(()=> {
+        const component = import('./components/ImageModal')
+    }, []);
 
     return (
         <div className="App">
@@ -16,7 +20,9 @@ function App() {
             <ButtonModal onClick={() => { setShowModal(true) }}>올림픽 사진 보기</ButtonModal>
             <SurveyChart />
             <Footer />
-            {showModal ? <ImageModal closeModal={() => { setShowModal(false) }} /> : null}
+            <Suspense fallback={null}>
+                {showModal ? <LazyImageModal closeModal={() => { setShowModal(false) }} /> : null}
+            </Suspense>
         </div>
     )
 }
